@@ -1,0 +1,3 @@
+Realizar un algoritmo que dado una jugada elija la mejor posición 
+de juego en un tablero de ta-te-tí. Se evaluará el tiempo de respuesta
+del algoritmo ante una jugada.

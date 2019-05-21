@@ -1,0 +1,6 @@
+Se cuenta con información previamente cargada (en una lista, diccionario, archivo, etc) de:
+a) Sucursales: id, nombre.
+b) articulos: id, descripción, precio
+c) Articulos_x_Sucursal: id, id_articulo, id_sucursal, cantidad
+
+Se necesita un informe que enumere los artículos cuya disponibilidad en una o varias sucursales sea cero, y en las otras mayor a 5 (al menos en una).
