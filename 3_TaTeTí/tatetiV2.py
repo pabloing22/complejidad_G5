@@ -10,8 +10,9 @@ cuadrantes.append(linea)
 cuadrantes.append(linea1)
 cuadrantes.append(linea2)
 etapa = 0
+fila = 0
 m = 0
-def imprimirPantalla():
+def imprimirPantalla(cuadrantes):
     print((cuadrantes[0])[0], "|", (cuadrantes[0])[1], "|", (cuadrantes[0])[2])
     print("---------")
     print((cuadrantes[1])[0], "|", (cuadrantes[1])[1], "|", (cuadrantes[1])[2])
@@ -29,7 +30,6 @@ def ingreseNumero():
     print("ingrese posición")
     x = int(input("posicion x: "))
     y = int(input("posicion y: "))
- 
     if(cuadrantes[x][y]!="X") and (cuadrantes[x][y]!="O"):
         cuadrantes[x][y] = pjugador
     else:
@@ -45,33 +45,58 @@ def VueltaAtras(etapa,cuadrantes):
             if etapa == 2:
                 imprimirPantalla()
             else:
-                VueltaAtras(etapa+1)
+                VueltaAtras(etapa+1,cuadrantes)
+
 
 
 def Valido(m,etapa,cuadrantes):
+
     for i in [0,1,2]:
-        if cuadrantes[i][etapa]=="X" or cuadrantes[i][etapa]=="O":
+        if cuadrantes[m][i]=="X" or cuadrantes[m][i]=="O":
             return False
 
     for j in [0,1,2]:
         if cuadrantes[m][j]=="X" or cuadrantes[m][j]=="O":
             return False
 
+    return True
+
+
+def esquinaLibre(fila,etapa,cuadrantes):
+    if(cuadrantes[fila][etapa]!="O")and(cuadrantes[fila][etapa]!="X"):
+        return True
+    else:
+        etapa = etapa + 2
+        if(etapa > 2):
+            etapa = 0
+            fila = fila + 2
+
+        esquinaLibre(fila,etapa,cuadrantes)
+
+
+
 
 def juegaMaquina():
-    VueltaAtras(etapa,cuadrantes)
-    Valido(m,etapa,cuadrantes)
+    if(cuadrantes[1][1]!="X")and(cuadrantes[1][1]!="O"): #Pregunta si esta libre el centro
+        cuadrantes[1][1]=pcompu
+        imprimirPantalla(cuadrantes)
+    else:
+        if(esquinaLibre(fila,etapa,cuadrantes)==True): #Pregunta si alguna esquina está libre
+            cuadrantes[fila][etapa] = pcompu
+        else:
+            VueltaAtras(etapa,cuadrantes)
+            Valido(m,etapa,cuadrantes)
 
 
 
 
 njugadas = 5
 asignarpiezas()
-imprimirPantalla()
+imprimirPantalla(cuadrantes)
 while njugadas > 0:
     ingreseNumero()
     os.system('cls')
-    imprimirPantalla()
+    imprimirPantalla(cuadrantes)
     juegaMaquina()
     njugadas = njugadas-1
 
