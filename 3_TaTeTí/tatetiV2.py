@@ -10,6 +10,7 @@ cuadrantes.append(linea)
 cuadrantes.append(linea1)
 cuadrantes.append(linea2)
 etapa = 0
+cantX = 0
 fila = 0
 m = 0
 def imprimirPantalla(cuadrantes):
@@ -75,17 +76,40 @@ def esquinaLibre(fila,etapa,cuadrantes):
 
 
 
+def ganaJugador(cuadrantes,fila,etapa):
+    #Control de filas
+    if(cuadrantes[0][0]==cuadrantes[0][1])or(cuadrantes[0][0]==cuadrantes[0][2])or(cuadrantes[0][1]==cuadrantes[0][2]):
+        return True
+    if(cuadrantes[1][0]==cuadrantes[1][1])or(cuadrantes[1][0]==cuadrantes[1][2])or(cuadrantes[1][1]==cuadrantes[1][2]):
+        return True
+    if(cuadrantes[2][0]==cuadrantes[2][1])or(cuadrantes[2][0]==cuadrantes[2][2])or(cuadrantes[2][1]==cuadrantes[2][2]):
+        return True
+
+
+def taparJugada(etapa,cuadrantes,fila):
+    if(cuadrantes[fila][etapa]!="X")and(cuadrantes[fila][etapa]!="O"):
+        cuadrantes[fila][etapa]=pcompu
+    else:
+        etapa = etapa + 1
+        if(etapa <= 2):
+            taparJugada(etapa,cuadrantes,fila)
+ 
+
+
 
 def juegaMaquina():
-    if(cuadrantes[1][1]!="X")and(cuadrantes[1][1]!="O"): #Pregunta si esta libre el centro
-        cuadrantes[1][1]=pcompu
-        imprimirPantalla(cuadrantes)
-    else:
-        if(esquinaLibre(fila,etapa,cuadrantes)==True): #Pregunta si alguna esquina está libre
-            cuadrantes[fila][etapa] = pcompu
+    if(ganaJugador(cuadrantes,fila,etapa)==True):
+        taparJugada(etapa,cuadrantes,fila)
+    else:  
+        if(cuadrantes[1][1]!="X")and(cuadrantes[1][1]!="O"): #Pregunta si esta libre el centro
+            cuadrantes[1][1]=pcompu
+            imprimirPantalla(cuadrantes)
         else:
-            VueltaAtras(etapa,cuadrantes)
-            Valido(m,etapa,cuadrantes)
+            if(esquinaLibre(fila,etapa,cuadrantes)==True): #Pregunta si alguna esquina está libre
+                cuadrantes[fila][etapa] = pcompu
+            else:
+                VueltaAtras(etapa,cuadrantes)
+                Valido(m,etapa,cuadrantes)
 
 
 
