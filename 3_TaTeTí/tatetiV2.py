@@ -1,14 +1,14 @@
 import os
 from random import randrange
 linea = [" ", " ", " "]
-linea1 = [" ", " ", " "]
+linea1 = [" ", " ", " "] # hay que borrar
 linea2 = [" ", " ", " "]
 cuadrantes = [[0,1,2],[3,4,5],[6,7,8]]
 pjugador = "X" #hay problemas en que si dejo esto en vacio, en la cuadrilla no se asigna nada en la pos que elige el jugador
 pcompu = "O"
 cuadrantes.append(linea)
 cuadrantes.append(linea1)
-cuadrantes.append(linea2)
+cuadrantes.append(linea2) # Hay que borar
 etapa = 0
 cantX = 0
 fila = 0
@@ -57,7 +57,7 @@ def Valido(m,etapa,cuadrantes):
             return False
 
     for j in [0,1,2]:
-        if cuadrantes[m][j]=="X" or cuadrantes[m][j]=="O":
+        if cuadrantes[m][j]=="X" or cuadrantes[m][j]=="O":  # Este ciclo hace lo mismo que el de arriba, no se si estan mal los indices-ag
             return False
 
     return True
@@ -109,7 +109,7 @@ def juegaMaquina():
                 cuadrantes[fila][etapa] = pcompu
             else:
                 VueltaAtras(etapa,cuadrantes)
-                Valido(m,etapa,cuadrantes)
+                Valido(m,etapa,cuadrantes)#¿Por que llama a la función si solo devuelte true o false?-ag
 
 
 
