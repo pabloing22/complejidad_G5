@@ -16,14 +16,48 @@ function divisores(i,j){
     }
 }
 
+// El cálculo de max determina un rango donde todos sus posibles divisores de encuentran
+// por ejemplo, para el numero 100 todos sus divisores de acumulan en el rango [1,50] 
+// después del 50 no se encuentran más divisores candidatos.
+// Otro ejemplo, si el numero es el 99, sus divisores se encontrarán entre el [1,33]
+
 // funcion para determinar los numeros amigos en un rango de valores [1 hasta i]
 function amigo(i,arreglo){
     if(i>1){
         let x=i
-        let z= Math.trunc((i/2)+1);
-        let y=divisores(x,z)
+        // Calculo para determinar max
+            let max = 0;
+            if(i%2==0) {
+                max=Math.trunc((i/2)+1);
+            }
+            else if(i%3==0) {
+                max=Math.trunc((i/3)+1);
+            }else if(i%5==0) {
+                max=Math.trunc((i/5)+1);
+            }else if(i%7==0) {
+                max=Math.trunc((i/7)+1);
+            } else if(i%11==0) {
+                max=Math.trunc((i/11)+1);
+            }
+        // fin calculo para determinar max
+        let y=divisores(x, max);
         if(y<x){
-            a=divisores(y,y-1)
+            // Calculo para determinar max
+                let max2 = 0;
+                if(y%2==0) {
+                    max2=Math.trunc((y/2)+1);
+                }
+                else if(y%3==0) {
+                    max2=Math.trunc((y/3)+1);
+                }else if(y%5==0) {
+                    max2=Math.trunc((y/5)+1);
+                }else if(y%7==0) {
+                    max2=Math.trunc((y/7)+1);
+                } else if(y%11==0) {
+                    max2=Math.trunc((y/11)+1);
+                }
+            // fin calculo para determinar max
+            a=divisores(y,max2)
             if(a===x){
                 arreglo.push([x,y]);
             }
