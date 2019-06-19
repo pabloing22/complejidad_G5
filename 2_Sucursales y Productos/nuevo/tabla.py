@@ -1,9 +1,7 @@
 def crear_tablas(cant_prod,cant_suc,stock_cero,mas_de_cinco):
 
 	import numpy
-	from random import randrange
-	from random import choice
-	from random import sample
+	from random import randrange,choice,sample
 	import string
 
 	cant=3;prec=3;desc=2;nom=1;prod=0;suc=0
