@@ -50,15 +50,8 @@ def crear_tablas(cant_prod,cant_suc,stock_cero,mas_de_cinco):
 				artxsuc[ID][1]=i+1
 				artxsuc[ID][2]=j+1
 
-	sucursales[0][suc]=1
-	sucursales[0][nom]='sucursal centro'
-	sucursales[1][suc]=2
-	sucursales[1][nom]='sucursal sur'
-	sucursales[2][suc]=3
-	sucursales[2][nom]='sucursal norte'
-	sucursales[3][suc]=4
-	sucursales[3][nom]='sucursal este'
-	sucursales[4][suc]=5
-	sucursales[4][nom]='sucursal oeste'
+	for i in range(cant_suc):
+		sucursales[i][suc]=1
+		sucursales[i][nom]=('sucursal numero '+str(i))
 
 	return (articulos,sucursales,artxsuc)
