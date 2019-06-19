@@ -27,13 +27,9 @@ def listar_productos(articulos,lista):
 		cont=cont+1
 	print('\nDe los productos sin stock se encontraron ',cont,' articulos con stock mayor que cinco en alguna otra sucursal')
 
-nom=1;suc=1;desc=2;prod=2;prec=3;cant=3;cant_art=0
-tablas=crear_tablas(50000,5,500,450)
-#creo una tabla aleatoria pasando como parametro:
-#la cantidad de productos en total 
-#la cantidad de sucursales
-#la cantidad de productos que quiero que tengan stock cero
-#la cantidad de productos con stock cero que quiero que tengan mas de cinco en stock en otra sucursal)
+nom=1;suc=1;prod=2;cant=3
+cant_prod=50000;cant_suc=5;stock_cero=500;mas_de_cinco=450
+tablas=crear_tablas(cant_productos,cant_sucursales,stock_cero,mas_de_cinco)
 
 #elijo la cantidad de productos con stock cero y demas para despues saber si el programa los detecta y los cuenta bien
 #en tabla.py se puede ver como genera las tablas
