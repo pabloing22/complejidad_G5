@@ -28,7 +28,7 @@ def listar_productos(articulos,lista):
 	print('\nDe los productos sin stock se encontraron ',cont,' articulos con stock mayor que cinco en alguna otra sucursal')
 
 nom=1;suc=1;prod=2;cant=3
-cant_productos=50000;cant_sucursales=5;stock_cero=500;mas_de_cinco=450
+cant_productos=50000;cant_sucursales=5;stock_cero=5000;mas_de_cinco=4500
 tablas=crear_tablas(cant_productos,cant_sucursales,stock_cero,mas_de_cinco)
 
 #elijo la cantidad de productos con stock cero y demas para despues saber si el programa los detecta y los cuenta bien
@@ -43,7 +43,8 @@ instanteInicial = datetime.now()
 
 lista=buscar_stock_cero(artxsuc)
 lista=buscar_stock_mayor_que_cinco(artxsuc,lista)
-listar_productos(articulos,lista.sort())
+lista.sort()
+listar_productos(articulos,lista)
 
 instanteFinal = datetime.now()
 tiempo = instanteFinal - instanteInicial
