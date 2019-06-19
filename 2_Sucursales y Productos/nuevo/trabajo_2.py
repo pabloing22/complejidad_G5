@@ -23,13 +23,13 @@ def buscar_stock_mayor_que_cinco(artxsuc,lista):
 def listar_productos(articulos,lista):
 	cont=0
 	for i in lista:
-		print(articulos[i-1][nom])
+		pprint('idp: ',articulos[i-1][0],' - nombre: ',articulos[i-1][nom])
 		cont=cont+1
 	print('\nDe los productos sin stock se encontraron ',cont,' articulos con stock mayor que cinco en alguna otra sucursal')
 
 nom=1;suc=1;prod=2;cant=3
 cant_prod=50000;cant_suc=5;stock_cero=500;mas_de_cinco=450
-tablas=crear_tablas(cant_productos,cant_sucursales,stock_cero,mas_de_cinco)
+tablas=crear_tablas(cant_producots,cant_sucursales,stock_cero,mas_de_cinco)
 
 #elijo la cantidad de productos con stock cero y demas para despues saber si el programa los detecta y los cuenta bien
 #en tabla.py se puede ver como genera las tablas
