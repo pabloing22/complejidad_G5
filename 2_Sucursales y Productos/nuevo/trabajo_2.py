@@ -43,7 +43,7 @@ instanteInicial = datetime.now()
 
 lista=buscar_stock_cero(artxsuc)
 lista=buscar_stock_mayor_que_cinco(artxsuc,lista)
-listar_productos(articulos,lista)
+listar_productos(articulos,lista.sort())
 
 instanteFinal = datetime.now()
 tiempo = instanteFinal - instanteInicial
