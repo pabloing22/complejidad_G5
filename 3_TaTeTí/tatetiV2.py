@@ -22,7 +22,11 @@ def evaluar(estado): #Funcion heuristica
 	return puntaje
 
 def ganador(estado,jugador):
-	win_state = [
+    # recibe como parametro estado, que hace referencia a la matriz BOARD
+    # además jugados -1/+1
+	win_state = [ 
+        # matriz donde se cargan todas las convinaciones de jugadas GANADORAS
+        # estado ace referencia a BOARD y recibe las posiciones jugadas y accede a través de índices
         [estado[0][0], estado[0][1], estado[0][2]],
         [estado[1][0], estado[1][1], estado[1][2]],
         [estado[2][0], estado[2][1], estado[2][2]],
@@ -38,6 +42,8 @@ def ganador(estado,jugador):
 		return False
 
 def derrota(estado):
+    # recibe como parámetro 'estado' que hace referencia al estado del tablero que contiene la matriz 'board'
+    # retorta falso siempre que ambos sean falsos. ver ganador() y envia como parametro -1 si es HUMAN ó +1 si es COMP;
 	return ganador(estado,HUMAN) or ganador(estado,COMP)
 
 def celdas_vacias(estado):
@@ -57,7 +63,11 @@ def validar_movimiento(x,y):
 		return False
 
 def tomarMovimiento(x,y,jugador):
+    # x e y poseen las coordenadas jugadas por un jugador.
+    # y jugador recibe -1/+1
+    # validar movimiento verifica si las celdas ingresadas por el jugador se encuentran vacías, en caso contrario retorna falso
 	if validar_movimiento(x, y):
+        # si pasó validar_movimiento, en board(posicion x,y) le asigna -1/+1 según quién jugó y retorna TRUE.
 		board[x][y] = jugador
 		return True
 	else:
@@ -125,13 +135,18 @@ def juegaPC(pcompu, phumano):
     time.sleep(1)
 
 def juegaHumano(pcompu, phumano):
-
+    #en una primer instancia pcompu=O y phumano=X 
+    #profundidad almacena la cantidad de celdas aún vacías
     profundidad = len(celdas_vacias(board))
+    
     if profundidad == 0 or derrota(board):
         return
 
     # Dictionary of valid moves
     movimiento = -1
+    # Se le asigna un identificador de número a cada coordenada para mapear con lo que ingresa el usuario
+    # se le pide que el usuario ingrese un numero por teclado, y si el usuario ingreso el 5, se hubicará una X
+    # en el medio del tablero.
     celdas = {
         1: [0, 0], 2: [0, 1], 3: [0, 2],
         4: [1, 0], 5: [1, 1], 6: [1, 2],
@@ -139,15 +154,21 @@ def juegaHumano(pcompu, phumano):
     }
 
     print('Turno del Jugador (X)')
+    #la funcion imprimir solo recibe las BOARD y los caracteres O y X para renderizarlas en la consola
+    # con caracteres especiales.
     imprimir(board, pcompu, phumano)
-    movimiento = int(input('Digite un numero (1--9)\n'))
+    # movimiento almacena lo que el usuario ingrese (un numero) que tendrá como referencia su posición
+    movimiento = int(input('Digite un numero (1--9)\n')) 
+    # este while solamente verifica que el numero ingresado esté dentro del rango    
     while(movimiento<1 or movimiento > 9):
     	imprimir(board,pcompu,phumano)
     	print('Casilla invalida')
     	movimiento = int(input('Digite un numero (1--9)\n'))
 
-
+    #coord almacena las coordenadas de celdas que recibe como parametro el numero ingresado por el usuario
     coord = celdas[movimiento]
+    #can_move llama a la funcion tomarMovimiento y le pasa como parametro coordenada en x e y ingresados por el usuario
+    # y el valor -1 que posee HUMAN
     can_move = tomarMovimiento(coord[0], coord[1], HUMAN)
 
 def principal():
@@ -157,7 +178,8 @@ def principal():
 
     # Main loop of this game
     while len(celdas_vacias(board)) > 0 and not derrota(board):  
-        juegaHumano(pcompu, phumano)
+        # repite el ciclo mientras no derrota() sea distinto a true. Ver derrota
+        juegaHumano(pcompu, phumano) #ver juegaHumano(O,X). 1)solicita 2) verifica 3) almacena
         os.system('cls')
         juegaPC(pcompu, phumano)
 
