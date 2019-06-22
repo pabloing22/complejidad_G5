@@ -1,249 +1,204 @@
+from math import inf as infinity
+from random import choice
+import platform
+import time
+from os import system
 import os
-from random import randrange
-import random
-cuadrantes = [[0,1,2],[3,4,5],[6,7,8]]
-esquinas = [0,2,6,8]
-medios = [1,3,5,7]
-pjugador = "X" #hay problemas en que si dejo esto en vacio, en la cuadrilla no se asigna nada en la pos que elige el jugador
-pcompu = "O"
-etapa = 0
-pieza=None
-fila = 0
-m = 0
+HUMAN = -1
+COMP = +1
+board = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+]
 
-def imprimirPantalla(cuadrantes):
-    print((cuadrantes[0])[0], "|", (cuadrantes[0])[1], "|", (cuadrantes[0])[2])
-    print("---------")
-    print((cuadrantes[1])[0], "|", (cuadrantes[1])[1], "|", (cuadrantes[1])[2])
-    print("---------")
-    print((cuadrantes[2])[0], "|", (cuadrantes[2])[1], "|", (cuadrantes[2])[2])
-    print('--------------------------------------------------------------------')
-
-
-
-def asignarpiezas():
-    c = input('Seleccione su pieza (X o O) \n')
-    pjugador = c
-    
-def descartarPosicion(x,y): #Elimina posiciones disponibles
-	#Descartando esquinas
-	if(x==0):
-		if(y==0):
-			esquinas.remove(0)
-		elif y==2:
-			esquinas.remove(2)
-	elif x==2:
-		if(y==0):
-			esquinas.remove(6)
-		elif y==2:
-			esquinas.remove(8)
-	#Descartando medios
-	if(x==1):
-		if y==0:
-			medios.remove(3)
-		elif y==2:
-			medios.remove(5)
+def evaluar(estado): #Funcion heuristica
+	if ganador(estado,COMP):
+		puntaje = +1
+	elif ganador(estado,HUMAN):
+		puntaje=-1
 	else:
-		if(y==1):
-			if(x==0):
-				medios.remove(1)
-			elif x==2:
-				medios.remove(7)
+		puntaje = 0
+	return puntaje
 
-def ingreseNumero():
-    print("ingrese posición")
-    x = int(input("posicion x: "))
-    y = int(input("posicion y: "))
-    if(cuadrantes[x][y]!="X") and (cuadrantes[x][y]!="O"):
-        cuadrantes[x][y] = pjugador
-        descartarPosicion(x,y)
-    else:
-        print('posicion invalida, la casilla esta ocupada o ingreso numeros invalidos ')
-        ingreseNumero()
-
-
-def esquinaLibre(cuadrantes): #Pregunta si hay una esquina libre
-	if esquinas:
+def ganador(estado,jugador):
+	win_state = [
+        [estado[0][0], estado[0][1], estado[0][2]],
+        [estado[1][0], estado[1][1], estado[1][2]],
+        [estado[2][0], estado[2][1], estado[2][2]],
+        [estado[0][0], estado[1][0], estado[2][0]],
+        [estado[0][1], estado[1][1], estado[2][1]],
+        [estado[0][2], estado[1][2], estado[2][2]],
+        [estado[0][0], estado[1][1], estado[2][2]],
+        [estado[2][0], estado[1][1], estado[0][2]],
+    ]
+	if [jugador, jugador, jugador] in win_state:
 		return True
 	else:
 		return False
 
-def taparColumna(cuadrantes,x,z): #Tapa la jugada en la columna
-	for x in[0,1,2]:
-		if(cuadrantes[x][z]!="X")and(cuadrantes[x][z]!="O"):
-			cuadrantes[x][z]=pcompu
-			descartarPosicion(x,z)
+def derrota(estado):
+	return ganador(estado,HUMAN) or ganador(estado,COMP)
 
-def ganaJugador(cuadrantes): #Verifica si el jugador puede ganar en la próxima jugada, es medio complicado de explicar porque tanto anidamiento de condiciones, pero tiene su razón
-    #Control de filas
-    if((cuadrantes[0][0]==cuadrantes[0][1])and cuadrantes[0][0]=="X"  and cuadrantes[0][2]!="O")or((cuadrantes[0][0]==cuadrantes[0][2])and cuadrantes[0][0]=="X" and cuadrantes[0][1]!="O")or((cuadrantes[0][1]==cuadrantes[0][2]) and cuadrantes[0][1]=="X" and cuadrantes[0][0]!="O"):
-        taparFila(0,cuadrantes,0)
-        return True
-    if((cuadrantes[1][0]==cuadrantes[1][1])and cuadrantes[1][0]=="X" and cuadrantes[1][2]!="O")or((cuadrantes[1][0]==cuadrantes[1][2])and cuadrantes[1][0]=="X" and cuadrantes[1][1]!="O")or((cuadrantes[1][1]==cuadrantes[1][2]) and cuadrantes[1][1]=="X" and cuadrantes[1][0]!="O"):
-    	taparFila(1,cuadrantes,0)
-    	return True
-    if(cuadrantes[2][0]==cuadrantes[2][1]and cuadrantes[2][0]=="X"  and cuadrantes[2][2]!="O")or(cuadrantes[2][0]==cuadrantes[2][2]and cuadrantes[2][0]=="X"  and cuadrantes[2][1]!="O")or(cuadrantes[2][1]==cuadrantes[2][2] and cuadrantes[2][1]=="X" and cuadrantes[2][0]!="O"):
-    	taparFila(2,cuadrantes,0)
-    	return True
-    #Control de columnas
-    if(cuadrantes[0][0]==cuadrantes[1][0]and cuadrantes[0][0]=="X"  and cuadrantes[2][0]!="O")or(cuadrantes[0][0]==cuadrantes[2][0]and cuadrantes[0][0]=="X" and cuadrantes[1][0]!="O")or(cuadrantes[1][0]==cuadrantes[2][0] and cuadrantes[1][0]=="X"and cuadrantes[0][0]!="O"):
-    	taparColumna(cuadrantes,0,0)
-    	return True
-    if(cuadrantes[0][1]==cuadrantes[1][1]and cuadrantes[0][1]=="X" and cuadrantes[2][1]!="O")or(cuadrantes[0][1]==cuadrantes[2][1]and cuadrantes[0][1]=="X" and cuadrantes[1][1]!="O")or(cuadrantes[1][1]==cuadrantes[2][1] and cuadrantes[1][1]=="X" and cuadrantes[0][1]!="O"):
-    	taparColumna(cuadrantes,0,1)
-    	return True
-    if(cuadrantes[0][2]==cuadrantes[1][2]and cuadrantes[0][2]=="X"  and cuadrantes[2][2]!="O")or(cuadrantes[0][2]==cuadrantes[2][2]and cuadrantes[0][2]=="X"  and cuadrantes[1][1]!="O")or(cuadrantes[1][2]==cuadrantes[2][2]and cuadrantes[2][2]=="X"and cuadrantes[0][2]!="O"):
-    	taparColumna(cuadrantes,0,2)
-    	return True
-    #Control de diagonales
-    if(cuadrantes[0][0]==cuadrantes[1][1]and cuadrantes[0][0]=="X"  and cuadrantes[2][2]!="O")or(cuadrantes[0][0]==cuadrantes[2][2]and cuadrantes[2][2]=="X"  and cuadrantes[1][1]!="O")or(cuadrantes[1][1]==cuadrantes[2][2]and cuadrantes[2][2]=="X"and cuadrantes[0][0]!="O"):
-    	taparDiagonal(cuadrantes,1,1)
-    	return True
-    if(cuadrantes[0][2]==cuadrantes[1][1]and cuadrantes[0][2]=="X" and cuadrantes[2][0]!="O")or(cuadrantes[0][2]==cuadrantes[2][0]and cuadrantes[2][0]=="X"  and cuadrantes[1][1]!="O")or(cuadrantes[1][1]==cuadrantes[2][0]and cuadrantes[2][0]=="X"and cuadrantes[0][2]!="O"):
-    	taparDiagonal(cuadrantes,1,1)
-    	return True
-    return False
+def celdas_vacias(estado):
+	celdas = []
 
-def taparDiagonal(cuadrantes,m,n): #Tapa jugadas en la diagonal
-	if(cuadrantes[0][0]==cuadrantes[m][n]):
-		cuadrantes[m+1][n+1]=pcompu
-		esquinas.remove(8)
-	elif cuadrantes[m][n]==cuadrantes[m+1][n+1]:
-		cuadrantes[0][0]=pcompu
-		esquinas.remove(0)
-	elif cuadrantes[m][n]==cuadrantes[m-1][n+1]:
-		cuadrantes[2][0]=pcompu
-		esquinas.remove(6)
-	elif cuadrantes[m][n]==cuadrantes[m+1][n-1]:
-		cuadrantes[0][2]=pcompu
-		esquinas.remove(2)
+	for x, row in enumerate(estado):
+		for y, cell in enumerate(row):
+			if cell == 0:
+				celdas.append([x, y])
 
-def taparFila(j,cuadrantes,k): #Tapa jugadas en las filas
-    if(cuadrantes[j][k]!="X")and(cuadrantes[j][k]!="O"):
-        cuadrantes[j][k]=pcompu
+	return celdas
+
+def validar_movimiento(x,y):
+	if [x, y] in celdas_vacias(board):
+		return True
+	else:
+		return False
+
+def tomarMovimiento(x,y,jugador):
+	if validar_movimiento(x, y):
+		board[x][y] = jugador
+		return True
+	else:
+		return False
+
+def minimax(estado, profundidad, jugador):
+    if jugador == COMP:
+        mejor = [-1, -1, -infinity]
     else:
-        k = k + 1
-        if(k <= 2):
-            taparFila(j,cuadrantes,k)
+        mejor = [-1, -1, +infinity]
+
+    if profundidad == 0 or derrota(estado):
+        puntaje = evaluar(estado)
+        return [-1, -1, puntaje]
+
+    for cell in celdas_vacias(estado):
+        x, y = cell[0], cell[1]
+        estado[x][y] = jugador
+        puntaje = minimax(estado, profundidad - 1, -jugador)
+        estado[x][y] = 0
+        puntaje[0], puntaje[1] = x, y
+
+        if jugador == COMP:
+            if puntaje[2] > mejor[2]:
+                mejor = puntaje  # max value
         else:
-        	k = 0
-        	j = j + 1
+            if puntaje[2] < mejor[2]:
+               mejor = puntaje  # min value
 
- 
-def lugarMedio(cuadrantes): #Pregunta si hay lugar en los medios
-	if medios:
-		return True
-	else:
-		return False
+    return mejor
 
-def puedoGanar(cuadrantes): #Tiene la misma funcion que la funcion ganarJugador, la maquina ve si puede ganar en la proxima jugada
-	#Control de filas
-    if((cuadrantes[0][0]==cuadrantes[0][1])and cuadrantes[0][0]=="O"  and cuadrantes[0][2]!="X")or((cuadrantes[0][0]==cuadrantes[0][2])and cuadrantes[0][0]=="O" and cuadrantes[0][1]!="O")or((cuadrantes[0][1]==cuadrantes[0][2]) and cuadrantes[0][1]=="O" and cuadrantes[0][0]!="X"):
-        Victoria(cuadrantes,0,0)
-        return True
-    if((cuadrantes[1][0]==cuadrantes[1][1])and cuadrantes[1][0]=="O" and cuadrantes[1][2]!="O")or((cuadrantes[1][0]==cuadrantes[1][2])and cuadrantes[1][0]=="O" and cuadrantes[1][1]!="O")or((cuadrantes[1][1]==cuadrantes[1][2]) and cuadrantes[1][1]=="O" and cuadrantes[1][0]!="X"):
-    	Victoria(cuadrantes,1,0)
-    	return True
-    if(cuadrantes[2][0]==cuadrantes[2][1]and cuadrantes[2][0]=="O"  and cuadrantes[2][2]!="O")or(cuadrantes[2][0]==cuadrantes[2][2]and cuadrantes[2][0]=="O"  and cuadrantes[2][1]!="O")or(cuadrantes[2][1]==cuadrantes[2][2] and cuadrantes[2][1]=="O" and cuadrantes[2][0]!="X"):
-    	Victoria(cuadrantes,2,0)
-    	return True
-    #Control de columnas
-    if(cuadrantes[0][0]==cuadrantes[1][0]and cuadrantes[0][0]=="O"  and cuadrantes[2][0]!="O")or(cuadrantes[0][0]==cuadrantes[2][0]and cuadrantes[0][0]=="O" and cuadrantes[1][0]!="O")or(cuadrantes[1][0]==cuadrantes[2][0] and cuadrantes[1][0]=="O"and cuadrantes[0][0]!="X"):
-    	Victoria(cuadrantes,0,0)
-    	return True
-    if(cuadrantes[0][1]==cuadrantes[1][1]and cuadrantes[0][1]=="O" and cuadrantes[2][1]!="O")or(cuadrantes[0][1]==cuadrantes[2][1]and cuadrantes[0][1]=="O" and cuadrantes[1][1]!="O")or(cuadrantes[1][1]==cuadrantes[2][1] and cuadrantes[1][1]=="O" and cuadrantes[0][1]!="X"):
-    	Victoria(cuadrantes,0,1)
-    	return True
-    if(cuadrantes[0][2]==cuadrantes[1][2]and cuadrantes[0][2]=="O"  and cuadrantes[2][2]!="O")or(cuadrantes[0][2]==cuadrantes[2][2]and cuadrantes[0][2]=="O"  and cuadrantes[1][1]!="O")or(cuadrantes[1][2]==cuadrantes[2][2]and cuadrantes[2][2]=="O"and cuadrantes[0][2]!="X"):
-    	Victoria(cuadrantes,0,2)
-    	return True
-    #Control de diagonales
-    if(cuadrantes[0][0]==cuadrantes[1][1]and cuadrantes[0][0]=="O"  and cuadrantes[2][2]!="O")or(cuadrantes[0][0]==cuadrantes[2][2]and cuadrantes[2][2]=="O"  and cuadrantes[1][1]!="O")or(cuadrantes[1][1]==cuadrantes[2][2]and cuadrantes[2][2]=="O"and cuadrantes[0][0]!="X"):
-    	Victoria(cuadrantes,1,1)
-    	return True
-    if(cuadrantes[0][2]==cuadrantes[1][1]and cuadrantes[0][2]=="O" and cuadrantes[2][0]!="O")or(cuadrantes[0][2]==cuadrantes[2][0]and cuadrantes[2][0]=="O"  and cuadrantes[1][1]!="O")or(cuadrantes[1][1]==cuadrantes[2][0]and cuadrantes[2][0]=="O"and cuadrantes[0][2]!="X"):
-    	Victoria(cuadrantes,1,1)
-    	return True
+def imprimir(estado, pcompu, phumano):
+    chars = {
+        -1: phumano,
+        +1: pcompu,
+        0: ' '
+    }
+    str_line = '---------------'
 
-def Victoria(cuadrantes,f,c): #Tecnicamente esta funcion hace que la maquina coloque su ultima ficha en la posicion que corresponde para ganar el duelo
-	if(cuadrantes[f][c]!="X")and(cuadrantes[f][c]!="O"):
-		cuadrantes[f][c]=pcompu
-	else:
-		c=c+1
-		if(c>2):
-			c=0
-			f=f+1
-		Victoria(cuadrantes,f,c)
+    print('\n' + str_line)
+    for row in estado:
+        for cell in row:
+            symbol = chars[cell]
+            print(f'| {symbol} |', end='')
+        print('\n' + str_line)
+
+def juegaPC(pcompu, phumano):
+  
+    profundidad = len(celdas_vacias(board))
+    if profundidad == 0 or derrota(board):
+        return
 
 
+    print('Turno del PC')
+    imprimir(board, pcompu, phumano)
 
-def juegaMaquina():
-	
-    if(ganaJugador(cuadrantes)==False):
-        if(cuadrantes[1][1]!="X")and(cuadrantes[1][1]!="O"): #Pregunta si esta libre el centro
-            cuadrantes[1][1]=pcompu
-        else:
-            if(esquinaLibre(cuadrantes)==True): #Pregunta si alguna esquina está libre
-            	m = random.choice(esquinas) #Hace una eleccion al azar entre las esquinas disponibles
-            	if(m==0):
-            		cuadrantes[0][0]=pcompu
-            	elif m==2:
-            		cuadrantes[0][2]=pcompu
-            	elif m==6:
-            		cuadrantes[2][0]=pcompu
-            	elif m==8:
-            		cuadrantes[2][2]=pcompu
-            	esquinas.remove(m) #Y aca elimina de la lista de esquinas, la ubicacion elegida
-            else:
-            	if(lugarMedio(cuadrantes)==True): #ídem que en el caso de las esquinas
-            		m = random.choice(medios)
-            		if(m==1):
-            			cuadrantes[0][1]=pcompu
-            		elif m==3:
-            			cuadrantes[1][0]=pcompu
-            		elif m==5:
-            			cuadrantes[1][2]=pcompu
-            		elif m==7:
-            			cuadrantes[2][1]=pcompu
-            		medios.remove(m)
+    if profundidad == 9:
+        x = choice([0, 1, 2])
+        y = choice([0, 1, 2])
     else:
-    	pass
+        movimiento = minimax(board, profundidad, COMP)
+        x, y = movimiento[0], movimiento[1]
 
-def hayLugar(a,b): #Aca pregunta si hay lugares en las esquinas o en los medios
-	if a and b:
-		return True
-	else:
-		return False
-def ganoAlguien(): #Va a retornar un True si gano alguien
-	return((cuadrantes[0][0]==pjugador)and(cuadrantes[0][1]==pjugador)and(cuadrantes[0][2]==pjugador)or(cuadrantes[1][0]==pjugador)and(cuadrantes[1][1]==pjugador)and(cuadrantes[1][2]==pjugador)or
-			(cuadrantes[2][0]==pjugador)and(cuadrantes[2][1]==pjugador)and(cuadrantes[2][2]==pjugador)or(cuadrantes[0][0]==pjugador)and(cuadrantes[1][0]==pjugador)and(cuadrantes[2][0]==pjugador)or
-			(cuadrantes[0][1]==pjugador)and(cuadrantes[1][1]==pjugador)and(cuadrantes[2][1]==pjugador)or(cuadrantes[0][2]==pjugador)and(cuadrantes[1][2]==pjugador)and(cuadrantes[2][2]==pjugador)or
-			(cuadrantes[0][0]==pjugador)and(cuadrantes[1][1]==pjugador)and(cuadrantes[2][2]==pjugador)or(cuadrantes[0][2]==pjugador)and(cuadrantes[1][1]==pjugador)and(cuadrantes[2][0]==pjugador))
+    tomarMovimiento(x, y, COMP)
+    time.sleep(1)
 
-	pieza = pjugador
+def juegaHumano(pcompu, phumano):
 
-	return((cuadrantes[0][0]==pcompu)and(cuadrantes[0][1]==pcompu)and(cuadrantes[0][2]==pcompu)or(cuadrantes[1][0]==pcompu)and(cuadrantes[1][1]==pcompu)and(cuadrantes[1][2]==pcompu)or
-			(cuadrantes[2][0]==pcompu)and(cuadrantes[2][1]==pcompu)and(cuadrantes[2][2]==pcompu)or(cuadrantes[0][0]==pcompu)and(cuadrantes[1][0]==pcompu)and(cuadrantes[2][0]==pcompu)or
-			(cuadrantes[0][1]==pcompu)and(cuadrantes[1][1]==pcompu)and(cuadrantes[2][1]==pcompu)or(cuadrantes[0][2]==pcompu)and(cuadrantes[1][2]==pcompu)and(cuadrantes[2][2]==pcompu)or
-			(cuadrantes[0][0]==pcompu)and(cuadrantes[1][1]==pcompu)and(cuadrantes[2][2]==pcompu)or(cuadrantes[0][2]==pcompu)and(cuadrantes[1][1]==pcompu)and(cuadrantes[2][0]==pcompu))
+    profundidad = len(celdas_vacias(board))
+    if profundidad == 0 or derrota(board):
+        return
 
-	pieza = pcompu
+    # Dictionary of valid moves
+    movimiento = -1
+    celdas = {
+        1: [0, 0], 2: [0, 1], 3: [0, 2],
+        4: [1, 0], 5: [1, 1], 6: [1, 2],
+        7: [2, 0], 8: [2, 1], 9: [2, 2],
+    }
 
-asignarpiezas()
-imprimirPantalla(cuadrantes)
+    print('Turno del Jugador (X)')
+    imprimir(board, pcompu, phumano)
+    movimiento = int(input('Digite un numero (1--9)\n'))
+    while(movimiento<1 or movimiento > 9):
+    	imprimir(board,pcompu,phumano)
+    	print('Casilla invalida')
+    	movimiento = int(input('Digite un numero (1--9)\n'))
 
-while hayLugar(esquinas,medios)==True and ganoAlguien()==False: #Se ejecuta mientras el tablero NO este lleno y mientras no haya ganado alguien
-    ingreseNumero()
-    os.system('cls')
-    juegaMaquina()
-    imprimirPantalla(cuadrantes)
- 
 
-if(ganoAlguien()==False):
-	print('<-- HAY EMPATE -->')
-else:
-	print('GANO ALGUIEN') #La idea en este sector es que muestre quien gano, aunque por la forma en que lo hice, creo que es medio dificil que alguien gane (o a lo sumo la PC) xD
-	print(pieza)
+    coord = celdas[movimiento]
+    can_move = tomarMovimiento(coord[0], coord[1], HUMAN)
+
+def principal():
+    phumano = 'X'  # X or O
+    pcompu = 'O'  # X or O
+    first = ''  # if human is the first
+
+    # Main loop of this game
+    while len(celdas_vacias(board)) > 0 and not derrota(board):  
+        juegaHumano(pcompu, phumano)
+        os.system('cls')
+        juegaPC(pcompu, phumano)
+
+    # Game over message
+    if ganador(board, HUMAN):
+        
+        print('Turno del jugador (X)')
+        imprimir(board, pcompu, phumano)
+        print('HAS GANADO!')
+    elif ganador(board, COMP):
+       
+        print('Turno del PC')
+        imprimir(board, pcompu, phumano)
+        print('HAS PERDIDO!')
+    else:
+    	imprimir(board, pcompu, phumano)
+    	print('EMPATE')
+
+    exit()
+
+
+principal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
