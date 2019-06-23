@@ -124,9 +124,8 @@ def misma_diagonal(tablero,ficha1,ficha2):
 	else:
 		return False
 
-from copy import deepcopy
-
 mostrar_tablero(tablero_prueba)
+
 for b in blancas:
 	print('Posibles posibles_movimientos de ',b,':\n')
 	print(posibles_movimientos(tablero_prueba,b))
