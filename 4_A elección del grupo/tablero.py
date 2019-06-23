@@ -17,11 +17,11 @@ def mostrar_tablero(tablero):
 
 def actualizar_tablero(tablero,movimiento):
 	ficha_a_mover=(' ')+movimiento[0]+(' ')
-	for i in tablero:#este bucle busca el alfil que se quiere mover para borrarlo y que al ponerlo en el tablero no se lo escriba dos veces
+	for i in tablero:#este bucle busca el alfil que se quiere mover para borrarlo para que al ponerlo en el tablero no se lo escriba dos veces
 		cont=0
 		for j in i:
 			if j==ficha_a_mover:
-				i[cont]='    '#deja vacia la antigual posicion del alfil  
+				i[cont]='    '#deja vacia la antigua posicion del alfil  
 			cont=cont+1
 	tablero[movimiento[1]][movimiento[2]]=ficha_a_mover#una vez borrada la posicion vieja, pongo el alfil en la nueva posicion
 	mostrar_tablero(tablero)#hecho el movimiento del alfil muestro como quedo el tablero 
