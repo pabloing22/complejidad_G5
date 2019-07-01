@@ -57,27 +57,41 @@ def celdas_vacias(estado):
 	return celdas
 
 def validar_movimiento(x,y):
-	if [x, y] in celdas_vacias(board):
-		return True
-	else:
-		return False
+    print('------------------------------------------------')
+    print('funcion validar_movimiento(x,y): ',x,y)
+    print('------------------------------------------------')
+    if [x, y] in celdas_vacias(board):
+        return True
+    else:
+        return False
 
 def tomarMovimiento(x,y,jugador):
+    print('------------------------------------------------')
+    print('funcion tomarMovimiento: ',x,y,jugador)
+    print('------------------------------------------------')
     # x e y poseen las coordenadas jugadas por un jugador.
     # y jugador recibe -1/+1
     # validar movimiento verifica si las celdas ingresadas por el jugador se encuentran vacías, en caso contrario retorna falso
-	if validar_movimiento(x, y):
+    if validar_movimiento(x, y):
         # si pasó validar_movimiento, en board(posicion x,y) le asigna -1/+1 según quién jugó y retorna TRUE.
-		board[x][y] = jugador
-		return True
-	else:
-		return False
+        board[x][y] = jugador
+        return True
+    else:
+        return False
 
 def minimax(estado, profundidad, jugador):
+    #jugador tiene +1/-1 segun corresponda
+    print('------------------------------------------------')
+    print('funcion minimax: ',estado,profundidad,jugador)
+    print('------------------------------------------------')
     if jugador == COMP:
+        print('jugador=COMP')
         mejor = [-1, -1, -infinity]
+        print('EL MEJOR: ',mejor)
     else:
+        print('jugador=HUMAN')
         mejor = [-1, -1, +infinity]
+        print('EL MEJOR: ',mejor)
 
     if profundidad == 0 or derrota(estado):
         puntaje = evaluar(estado)
@@ -96,7 +110,7 @@ def minimax(estado, profundidad, jugador):
         else:
             if puntaje[2] < mejor[2]:
                mejor = puntaje  # min value
-
+    print('EL MEJOR EL MEJOR DE TODOS ES: ', mejor)
     return mejor
 
 def imprimir(estado, pcompu, phumano):
@@ -115,7 +129,9 @@ def imprimir(estado, pcompu, phumano):
         print('\n' + str_line)
 
 def juegaPC(pcompu, phumano):
-  
+    print('------------------------------------------------')
+    print('funcion juegaPC: ', pcompu, phumano)
+    print('------------------------------------------------')
     profundidad = len(celdas_vacias(board))
     if profundidad == 0 or derrota(board):
         return
@@ -135,6 +151,9 @@ def juegaPC(pcompu, phumano):
     time.sleep(1)
 
 def juegaHumano(pcompu, phumano):
+    print('------------------------------------------------')
+    print('funcion juegaHumano: ',pcompu, phumano)
+    print('------------------------------------------------')
     #en una primer instancia pcompu=O y phumano=X 
     #profundidad almacena la cantidad de celdas aún vacías
     profundidad = len(celdas_vacias(board))
